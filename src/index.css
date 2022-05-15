@@ -44,13 +44,13 @@ code {
 
 .pageHeader {
   color: orange;
-  font-size: 20px;
-  padding-top: 0px;
+  font-size: 17px;
+  padding-top: 10px;
   font-weight: bold;
   position: fixed;
   background-color: #081a51;
   width: 100%;
-  height: 42px;
+  height: 52px;
   display: flex;
 }
 
@@ -64,14 +64,14 @@ code {
 }
 
 .ant-layout-content {
-  margin-top: 34px;
+  margin-top: 44px;
   padding: 25px 16px 0px;
   z-index: 1;
   background-color: #f0f2f5;
 }
 
 .circle_card {
-  background: #192d6a;
+  background: gray;
   border-radius: 50%;
   width: 45px;
   height: 45px;
@@ -85,6 +85,7 @@ code {
 .recentActivity {
   height: 150px;
   background-color: white;
+  padding: 10px;
 }
 
 .addNewBuildingModal {
