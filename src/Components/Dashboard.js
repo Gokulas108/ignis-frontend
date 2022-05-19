@@ -18,7 +18,7 @@ export default function Dashboard() {
 					<Card
 						style={{
 							width: "100%",
-							backgroundColor: "#fafafa",
+							backgroundColor: "#003049",
 							height: "100%",
 						}}
 					>
@@ -32,7 +32,7 @@ export default function Dashboard() {
 									<div className="circle_card">
 										<BankOutlined
 											style={{
-												color: "white",
+												color: "orange",
 												padding: "10px",
 												fontSize: "25px",
 											}}
@@ -42,9 +42,9 @@ export default function Dashboard() {
 							</Col>
 							<Col span={18}>
 								{" "}
-								<span style={{ color: "#444444", fontSize: "20px" }}>2</span>
+								<span style={{ color: "orange", fontSize: "20px" }}>2</span>
 								<br />
-								<span style={{ color: "darkslategray" }}>
+								<span style={{ color: "orange" }}>
 									New buildings require asset tagging
 								</span>
 							</Col>
@@ -57,7 +57,7 @@ export default function Dashboard() {
 					<Card
 						style={{
 							width: "100%",
-							backgroundColor: "#fafafa",
+							backgroundColor: "#003049",
 							height: "100%",
 						}}
 					>
@@ -71,7 +71,7 @@ export default function Dashboard() {
 									<div className="circle_card">
 										<FormOutlined
 											style={{
-												color: "white",
+												color: "orange",
 												padding: "10px",
 												fontSize: "25px",
 											}}
@@ -81,9 +81,9 @@ export default function Dashboard() {
 							</Col>
 							<Col span={18}>
 								{" "}
-								<span style={{ color: "#444444", fontSize: "20px" }}>79</span>
+								<span style={{ color: "orange", fontSize: "20px" }}>79</span>
 								<br />
-								<span style={{ color: "darkslategray" }}>
+								<span style={{ color: "orange" }}>
 									Work orders pending to be completed
 								</span>
 							</Col>
@@ -96,7 +96,7 @@ export default function Dashboard() {
 					<Card
 						style={{
 							width: "100%",
-							backgroundColor: "#fafafa",
+							backgroundColor: "#003049",
 							height: "100%",
 						}}
 					>
@@ -110,7 +110,7 @@ export default function Dashboard() {
 									<div className="circle_card">
 										<BellOutlined
 											style={{
-												color: "white",
+												color: "orange",
 												padding: "10px",
 												fontSize: "25px",
 											}}
@@ -120,9 +120,9 @@ export default function Dashboard() {
 							</Col>
 							<Col span={18}>
 								{" "}
-								<span style={{ color: "#444444", fontSize: "20px" }}>12</span>
+								<span style={{ color: "orange", fontSize: "20px" }}>12</span>
 								<br />
-								<span style={{ color: "darkslategray" }}>
+								<span style={{ color: "orange" }}>
 									Notifications pending for approval
 								</span>
 							</Col>
@@ -136,7 +136,7 @@ export default function Dashboard() {
 						style={{
 							width: "100%",
 							height: "100%",
-							backgroundColor: "#fafafa",
+							backgroundColor: "#003049",
 						}}
 					>
 						<Row
@@ -149,7 +149,7 @@ export default function Dashboard() {
 									<div className="circle_card">
 										<UsergroupAddOutlined
 											style={{
-												color: "white",
+												color: "orange",
 												padding: "10px",
 												fontSize: "25px",
 											}}
@@ -159,11 +159,11 @@ export default function Dashboard() {
 							</Col>
 							<Col span={18}>
 								{" "}
-								<span style={{ color: "#444444", fontSize: "20px" }}>
+								<span style={{ color: "orange", fontSize: "20px" }}>
 									167/266
 								</span>
 								<br />
-								<span style={{ color: "darkslategray" }}>
+								<span style={{ color: "orange" }}>
 									Technicians working currently on site
 								</span>
 							</Col>
@@ -180,12 +180,12 @@ export default function Dashboard() {
 						<Col span={24}>
 							<div
 								style={{
-									backgroundColor: "#fafafa",
-									height: "30px",
-									padding: "5px",
+									backgroundColor: "#003049",
+									height: "45px",
+									padding: "13px 10px",
 								}}
 							>
-								<span style={{ color: "#444444", fontWeight: "bold" }}>
+								<span style={{ color: "orange", fontWeight: "bold" }}>
 									Work Status
 								</span>
 							</div>
@@ -214,17 +214,15 @@ export default function Dashboard() {
 				<Col span={10} style={{ paddingLeft: "12px" }}>
 					<div
 						style={{
-							backgroundColor: "#fafafa",
-							height: "30px",
-							padding: "5px",
+							backgroundColor: "#003049",
+							height: "45px",
+							padding: "13px 10px",
 							width: "100%",
 						}}
 					>
 						<span
 							style={{
-								color: "#444444",
-								padding: "10px",
-								paddingBottom: "10px",
+								color: "orange",
 								fontWeight: "bold",
 							}}
 						>

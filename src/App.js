@@ -30,7 +30,6 @@ export default function App() {
 						<Route path="/" element={<Dashboard />} />
 						<Route path="/workorder" element={<Workorder />} />
 					</Route>
-
 					<Route path="/login" element={<Login />} />
 				</Routes>
 			</div>

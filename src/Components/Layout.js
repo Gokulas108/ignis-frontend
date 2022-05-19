@@ -72,7 +72,7 @@ const LayoutComponent = () => {
 						position: "fixed",
 						left: 0,
 						zIndex: 998,
-						backgroundColor: "#081A51",
+						backgroundColor: "#003049",
 					}}
 					breakpoint="lg"
 					collapsed={collapsed}
@@ -85,30 +85,50 @@ const LayoutComponent = () => {
 					</div>
 					<Menu
 						theme="dark"
-						style={{ backgroundColor: "#081A51" }}
+						style={{ backgroundColor: "#003049" }}
 						mode="inline"
 						defaultSelectedKeys={[location.pathname]}
 						onClick={(item) => navigate(item.key)}
 					>
-						<Menu.Item key="/" icon={<BarChartOutlined />}>
+						<Menu.Item
+							key="/"
+							className="itemStyle"
+							icon={<BarChartOutlined />}
+						>
 							Dashboard
 						</Menu.Item>
-						<Menu.Item key="/buildings" icon={<BankOutlined />}>
+						<Menu.Item
+							key="/buildings"
+							className="itemStyle"
+							icon={<BankOutlined />}
+						>
 							Buildings
 						</Menu.Item>
 						{/* <Menu.Item key="3" icon={<ApiOutlined />}>
               Assets
             </Menu.Item> */}
-						<Menu.Item key="/notifications" icon={<BellOutlined />}>
+						<Menu.Item
+							key="/notifications"
+							className="itemStyle"
+							icon={<BellOutlined />}
+						>
 							Notifications
 						</Menu.Item>
-						<Menu.Item key="/workorder" icon={<ReconciliationOutlined />}>
+						<Menu.Item
+							key="/workorder"
+							className="itemStyle"
+							icon={<ReconciliationOutlined />}
+						>
 							Work Orders
 						</Menu.Item>
-						<Menu.Item key="6" icon={<CalendarOutlined />}>
+						<Menu.Item
+							key="6"
+							className="itemStyle"
+							icon={<CalendarOutlined />}
+						>
 							Schedule
 						</Menu.Item>
-						<Menu.Item key="7" icon={<FormOutlined />}>
+						<Menu.Item key="7" className="itemStyle" icon={<FormOutlined />}>
 							Reports
 						</Menu.Item>
 					</Menu>
@@ -133,7 +153,7 @@ const LayoutComponent = () => {
 					</div>
 					<Content
 						style={{
-							borderRadius: showButton ? "0" : "10px 0 0 0",
+							borderRadius: showButton ? "0" : "2px 0 0 0",
 							overflow: "initial",
 						}}
 					>
@@ -141,7 +161,9 @@ const LayoutComponent = () => {
 							<Outlet />
 						</div>
 					</Content>
-					<Footer style={{ textAlign: "center" }}>FIRELINK ©2022</Footer>
+					<Footer style={{ textAlign: "center", backgroundColor: "#F7F7F7" }}>
+						FIRELINK ©2022
+					</Footer>
 				</Layout>
 			</Layout>
 		</div>

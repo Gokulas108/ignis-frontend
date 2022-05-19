@@ -3,7 +3,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  background-color: #f0f2f5 !important;
+  background-color: #f7f7f7 !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -48,7 +48,7 @@ code {
   padding-top: 10px;
   font-weight: bold;
   position: fixed;
-  background-color: #081a51;
+  background-color: #003049;
   width: 100%;
   height: 52px;
   display: flex;
@@ -67,11 +67,11 @@ code {
   margin-top: 44px;
   padding: 25px 16px 0px;
   z-index: 1;
-  background-color: #f0f2f5;
+  background-color: #F7F7F7;
 }
 
 .circle_card {
-  background: gray;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   width: 45px;
   height: 45px;
@@ -80,6 +80,7 @@ code {
 .cardg {
   display: flex;
   justify-content: center;
+  background-color: #081a51;
 }
 
 .recentActivity {
@@ -137,3 +138,37 @@ code {
 .ant-tabs-top {
   height: 100% !important;
 }
+
+thead[class*="ant-table-thead"] th{
+  background-color: #003049 !important;
+  color: orange !important;
+}
+
+.ant-btn-primary {
+  background-color: #003049 !important;
+  color: orange !important;
+  border-color: #081a51 !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: #002f49da !important;
+  color: orange !important;
+  border-color: #081a51c6 !important;
+}
+
+.ant-menu.ant-menu-dark .ant-menu-item-selected.itemStyle {
+  background-color: rgba(0, 0, 0, 0.32) !important;
+}
+
+.ant-menu-dark .ant-menu-item-selected .ant-menu-item-icon, .ant-menu-dark .ant-menu-item-selected .anticon,
+.ant-menu-dark .ant-menu-item-selected .ant-menu-item-icon + span, .ant-menu-dark .ant-menu-item-selected .anticon + span {
+  color: orange !important;
+}
+
+.ant-modal-title,
+.ant-modal-close-x,
+.ant-modal-header {
+  background-color: #003049 !important;
+  color: orange !important;
+}
+
