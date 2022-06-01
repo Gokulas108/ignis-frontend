@@ -17,50 +17,42 @@ import {
 	InboxOutlined,
 } from "@ant-design/icons";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../axiosConfig";
+import { degrees, PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 const { Option } = Select;
-
-const systemColumns = [
-	{
-		title: "System",
-		dataIndex: "system",
-		key: "system",
-	},
-	{
-		title: "Frequency",
-		dataIndex: "frequency",
-		key: "frequency",
-		render: (text) => (
-			<Select defaultValue={text}>
-				<Option value="weekly">Weekly</Option>
-				<Option value="monthly">Monthly</Option>
-				<Option value="semiAnnually">Semi Annually</Option>
-				<Option value="annually">Annually</Option>
-			</Select>
-		),
-	},
-];
-
-function onChange(checkedValues) {
-	console.log("checked = ", checkedValues);
-}
-
-const options = [
-	{ label: "QCDD", value: "QCDD" },
-	{ label: "UAE", value: "UAE" },
-	{ label: "NFPA", value: "NFPA" },
-	{
-		label: "KSA",
-		value: "KSA",
-	},
-	{ label: "Others", value: "Others" },
-];
 
 export default function ContractDetails(props) {
 	const [form] = Form.useForm();
 	const [systemData, setSystemData] = useState([]);
 	const [systemTableLoading, setSystemTableLoading] = useState(true);
+
+	const systemColumns = [
+		{
+			title: "System",
+			dataIndex: "system",
+			key: "system",
+		},
+		{
+			title: "Frequency",
+			dataIndex: "frequency",
+			key: "frequency",
+			render: (text, record, index) => (
+				<Select defaultValue={text} onSelect={(e) => setFrequency(e, index)}>
+					<Option value="weekly">Weekly</Option>
+					<Option value="monthly">Monthly</Option>
+					<Option value="semiAnnually">Semi Annually</Option>
+					<Option value="annually">Annually</Option>
+				</Select>
+			),
+		},
+	];
+
+	const setFrequency = (value, index) => {
+		let data = systemData;
+		data[index].frequency = value;
+		setSystemData(data);
+	};
 
 	const normFile = (e) => {
 		console.log("Upload event:", e);
@@ -74,18 +66,27 @@ export default function ContractDetails(props) {
 
 	useEffect(() => {
 		let data = [];
-		props.buildingDetails.fireProtectionSystems.map((system) => {
-			data.push({ system: system.label, frequency: "weekly" });
+		props.buildingDetails.fire_protection_systems.map((system) => {
+			data.push({
+				system: system.label,
+				frequency: "weekly",
+				value: system.value,
+			});
 		});
 		setSystemData(data);
 		setSystemTableLoading(false);
-	}, [props.buildingDetails.fireProtectionSystems]);
+	}, [props.buildingDetails.fire_protection_systems]);
 
 	const onFinish = (values) => {
 		console.log("Success:", values);
 		let data = { ...props.buildingDetails, ...values };
+		data = { ...data, fire_protection_systems: systemData };
+		delete data["unit_no"];
+		delete data["dragger"];
 		console.log("Final data", data);
+		api.post("/buildings", { building: data }).then((res) => console.log(res));
 		props.success();
+		generatePDF(data);
 	};
 
 	const onFinishFailed = (errorInfo) => {
@@ -94,6 +95,110 @@ export default function ContractDetails(props) {
 
 	const onReset = () => {
 		form.resetFields();
+	};
+
+	const padTo2Digits = (num) => {
+		return num.toString().padStart(2, "0");
+	};
+
+	const formatDate = (date) => {
+		return [
+			padTo2Digits(date.getDate()),
+			padTo2Digits(date.getMonth() + 1),
+			date.getFullYear(),
+		].join("/");
+	};
+
+	const generatePDF = async (data) => {
+		console.log(data);
+
+		const existingPdfBytes = await fetch("/Template3.pdf").then((res) =>
+			res.arrayBuffer()
+		);
+
+		const pdfDoc = await PDFDocument.load(existingPdfBytes);
+		const form = pdfDoc.getForm();
+		let textField = form.getTextField("apple");
+		textField.setText("123423");
+		textField = form.getTextField("date");
+		textField.setText(formatDate(new Date()));
+		textField = form.getTextField("name");
+		textField.setText(data.building_name.toString());
+		textField = form.getTextField("certno");
+		textField.setText(data.building_completion_certificate_number.toString());
+		textField = form.getTextField("building");
+		textField.setText(data.building_no.toString());
+		textField = form.getTextField("street");
+		textField.setText(data.street_no.toString());
+		textField = form.getTextField("zone");
+		textField.setText(data.zone_no.toString());
+		textField = form.getTextField("contact");
+		textField.setText(data.contact_number.toString());
+		textField = form.getTextField("occupancy");
+		textField.setText("classification1");
+		textField = form.getTextField("height");
+		textField.setText(data.building_height.toString());
+		textField = form.getTextField("area");
+		textField.setText(data.building_area.toString());
+		textField = form.getTextField("type");
+		textField.setText(data.type_of_construction.toString());
+		textField = form.getTextField("hazard");
+		textField.setText("test");
+		let checkBox;
+		data.fire_protection_systems.map((item) => {
+			if (item.value === "automaticSprinkler") {
+				checkBox = form.getCheckBox("o1");
+				checkBox.check();
+			} else if (item.value === "firePump") {
+				checkBox = form.getCheckBox("o2");
+				checkBox.check();
+			} else if (item.value === "waterSupplySystem") {
+				checkBox = form.getCheckBox("o3");
+				checkBox.check();
+			} else if (item.value === "standpipeAndHoseSystem") {
+				checkBox = form.getCheckBox("o4");
+				checkBox.check();
+			} else if (item.value === "fireHydrants") {
+				checkBox = form.getCheckBox("o5");
+				checkBox.check();
+			} else if (item.value === "waterMistSystem") {
+				checkBox = form.getCheckBox("o6");
+				checkBox.check();
+			} else if (item.value === "foamSystem") {
+				checkBox = form.getCheckBox("o7");
+				checkBox.check();
+			} else if (item.value === "fixedWetChemicalExtinguishingSystem") {
+				checkBox = form.getCheckBox("o8");
+				checkBox.check();
+			} else if (item.value === "cleanAgentFireExtinguishingSystem") {
+				checkBox = form.getCheckBox("o9");
+				checkBox.check();
+			} else if (item.value === "fixedAerosoleSystem") {
+				checkBox = form.getCheckBox("o10");
+				checkBox.check();
+			} else if (item.value === "portableFireExtinguisher") {
+				checkBox = form.getCheckBox("o11");
+				checkBox.check();
+			} else if (item.value === "fireDetectionAndAlarmSystem") {
+				checkBox = form.getCheckBox("o12");
+				checkBox.check();
+			} else if (item.value === "emergencyLightingEPSS") {
+				checkBox = form.getCheckBox("o13");
+				checkBox.check();
+			} else if (item.value === "others") {
+				checkBox = form.getCheckBox("o15");
+				checkBox.check();
+			}
+		});
+		form.flatten();
+		const pdfBytes = await pdfDoc.save({});
+		const bytes = new Uint8Array(pdfBytes);
+		const blob = new Blob([bytes], { type: "application/pdf" });
+		const docUrl = URL.createObjectURL(blob);
+		const tempLink = document.createElement("a");
+		tempLink.href = docUrl;
+		tempLink.setAttribute("download", `${data.building_name.toString()}.pdf`);
+		tempLink.click();
 	};
 
 	return (
@@ -106,67 +211,10 @@ export default function ContractDetails(props) {
 			labelCol={{ span: 24, style: { paddingTop: 3 } }}
 			wrapperCol={{ span: 24 }}
 			size="small"
-			initialValues={{ currency: "QAR", timezone: "AST", region: "Qatar" }}
+			initialValues={{ currency: "QAR" }}
 		>
 			<Row>
 				<Col span={12} style={{ paddingRight: "10px" }}>
-					<Row>
-						<Col md={12} xs={24} style={{ paddingRight: "10px" }}>
-							<Form.Item
-								label="Region"
-								name="region"
-								rules={[
-									{
-										required: true,
-										message: "Please select a region",
-									},
-								]}
-							>
-								<Select defaultValue="Qatar">
-									<Option value="Qatar">Qatar</Option>
-									<Option value="India">India</Option>
-								</Select>
-							</Form.Item>{" "}
-						</Col>
-						<Col md={12} xs={24}>
-							<Form.Item
-								label="Time Zone"
-								name="timezone"
-								rules={[
-									{
-										required: true,
-										message: "Please select a time zone",
-									},
-								]}
-							>
-								<Select defaultValue="AST">
-									<Option value="AST">AST</Option>
-									<Option value="IST">IST</Option>
-									<Option value="GMT">GMT</Option>
-								</Select>
-							</Form.Item>
-						</Col>
-					</Row>
-					<Form.Item
-						name="jurisdiction"
-						label="Jurisdiction"
-						rules={[
-							{
-								required: true,
-								message: "Please select the jurisdiction",
-							},
-						]}
-					>
-						<Checkbox.Group style={{ width: "100%" }}>
-							<Row>
-								{options.map((option) => (
-									<Col key={option.value} md={12} xs={24}>
-										<Checkbox value={option.value}>{option.label}</Checkbox>
-									</Col>
-								))}
-							</Row>
-						</Checkbox.Group>
-					</Form.Item>
 					<Row>
 						<Col span={24} style={{ paddingRight: "20px" }}>
 							<Table
@@ -236,7 +284,7 @@ export default function ContractDetails(props) {
 						<Col md={12} xs={24} style={{}}>
 							<Form.Item
 								label="Contract Number"
-								name="contractNumber"
+								name="contract_number"
 								rules={[
 									{
 										required: true,
@@ -250,7 +298,7 @@ export default function ContractDetails(props) {
 						<Col md={12} xs={24} style={{ paddingLeft: "10px" }}>
 							<Form.Item
 								label="Contract Type"
-								name="contracttype"
+								name="contract_type"
 								rules={[
 									{
 										required: true,
@@ -266,7 +314,7 @@ export default function ContractDetails(props) {
 						<Col md={16} xs={18} style={{ paddingRight: "10px" }}>
 							<Form.Item
 								label="Total Contract Value"
-								name="totalContractValue"
+								name="total_contract_value"
 								rules={[
 									{
 										required: true,

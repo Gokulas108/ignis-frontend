@@ -91,7 +91,7 @@ code {
 
 .addNewBuildingModal {
   top: 20px !important;
-  width: 65% !important;
+  width: 60% !important;
 }
 
 @media (max-width: 992px) {
@@ -172,3 +172,10 @@ thead[class*="ant-table-thead"] th{
   color: orange !important;
 }
 
+.popover-button{
+  color: orange;
+  margin-top: 5px;
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+}

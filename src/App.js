@@ -4,6 +4,7 @@ import Layout from "./Components/Layout";
 import Dashboard from "./Components/Dashboard";
 import Buildings from "./Components/Buildings";
 import Notifications from "./Components/Notifications";
+import LoadPDF from "./Components/Pdf";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -31,6 +32,7 @@ export default function App() {
 						<Route path="/workorder" element={<Workorder />} />
 					</Route>
 					<Route path="/login" element={<Login />} />
+					<Route path="/pdf" element={<LoadPDF />} />
 				</Routes>
 			</div>
 		</Router>
