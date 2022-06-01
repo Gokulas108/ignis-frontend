@@ -475,7 +475,7 @@ export default function AddProperty(props) {
 					<Row>
 						<Col md={12} xs={24} style={{ paddingLeft: "10px" }}>
 							<Row>
-								<Col md={22} xs={22}>
+								<Col md={24} xs={24}>
 									<Form.Item
 										label="Occupancy Classification"
 										name="occupancy_classification"
@@ -493,8 +493,8 @@ export default function AddProperty(props) {
 										</Select>
 									</Form.Item>
 								</Col>
-								<Col span={2}>
-									<Popover
+								{/* <Col span={2}> */}
+								{/* <Popover
 										content={
 											<>
 												<Input
@@ -590,11 +590,11 @@ export default function AddProperty(props) {
 										>
 											-
 										</Button>
-									</Popover>
-								</Col>
+									</Popover> */}
+								{/* </Col> */}
 							</Row>
 						</Col>
-						<Col md={11} xs={22} style={{ paddingLeft: "10px" }}>
+						<Col md={12} xs={24} style={{ paddingLeft: "10px" }}>
 							<Form.Item
 								label="Hazard Classification"
 								name="hazard_classification"
@@ -612,8 +612,8 @@ export default function AddProperty(props) {
 								</Select>
 							</Form.Item>
 						</Col>
-						<Col md={1} xs={2}>
-							<Popover
+						{/* <Col md={1} xs={2}> */}
+						{/* <Popover
 								content={
 									<>
 										<Input
@@ -709,8 +709,8 @@ export default function AddProperty(props) {
 								>
 									-
 								</Button>
-							</Popover>
-						</Col>
+							</Popover> */}
+						{/* </Col> */}
 					</Row>
 
 					<Row>

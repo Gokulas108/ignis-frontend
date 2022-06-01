@@ -211,7 +211,7 @@ export default function ContractDetails(props) {
 			labelCol={{ span: 24, style: { paddingTop: 3 } }}
 			wrapperCol={{ span: 24 }}
 			size="small"
-			initialValues={{ currency: "QAR" }}
+			initialValues={{ currency: 1 }}
 		>
 			<Row>
 				<Col span={12} style={{ paddingRight: "10px" }}>
@@ -332,8 +332,8 @@ export default function ContractDetails(props) {
 								rules={[{ required: false }]}
 							>
 								<Select defaultValue="QAR">
-									<Option value="INR">INR</Option>
-									<Option value="QAR">QAR</Option>
+									<Option value={0}>INR</Option>
+									<Option value={1}>QAR</Option>
 								</Select>
 							</Form.Item>
 						</Col>
