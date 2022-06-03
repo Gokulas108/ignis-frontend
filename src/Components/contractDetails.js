@@ -26,6 +26,7 @@ export default function ContractDetails(props) {
 	const [form] = Form.useForm();
 	const [systemData, setSystemData] = useState([]);
 	const [systemTableLoading, setSystemTableLoading] = useState(true);
+	const [submitLoading, setSubmitLoading] = useState(false);
 
 	const systemColumns = [
 		{
@@ -84,9 +85,15 @@ export default function ContractDetails(props) {
 		delete data["unit_no"];
 		delete data["dragger"];
 		console.log("Final data", data);
-		api.post("/buildings", { building: data }).then((res) => console.log(res));
-		props.success();
-		generatePDF(data);
+		setSubmitLoading(true);
+		api.post("/buildings", { building: data }).then((res) => {
+			console.log(res);
+			props.getBuildingDetails();
+			props.success();
+			props.setSubModel(false);
+			setSubmitLoading(false);
+			generatePDF(data);
+		});
 	};
 
 	const onFinishFailed = (errorInfo) => {
@@ -375,9 +382,7 @@ export default function ContractDetails(props) {
 						block
 						type="primary"
 						htmlType="submit"
-						onClick={() => {
-							props.setSubModel(false);
-						}}
+						loading={submitLoading}
 					>
 						Submit
 					</Button>

@@ -5,39 +5,68 @@ import { PlusOutlined } from "@ant-design/icons";
 import Createnewnotification from "./createnewnotification";
 import Createworkorder from "./createworkorder";
 import Createworkorder2 from "./createworkorder2";
+import api from "../axiosConfig";
 
 const { Search } = Input;
 
 export default function Buildings() {
 	const [data, setData] = useState([]);
 	const [asset, setAsset] = useState([]);
+	const [buildingLoading, setBuidlingLoading] = useState(false);
 	const [renewal, setRenewal] = useState([]);
+
+	useEffect(() => {
+		getBuildingDetails();
+	}, []);
+
+	const getBuildingDetails = () => {
+		setBuidlingLoading(true);
+		// setAssetLoading(true);
+		api.get("/buildings").then((res) => {
+			console.log(res);
+			setData(res.data.message);
+			// setAsset(res.data.message);
+			setBuidlingLoading(false);
+			// setAssetLoading(false);
+		});
+	};
 
 	const columns = [
 		{
 			title: "Notification No.",
-			dataIndex: "notificationNo",
-			key: "notificationNo",
+			dataIndex: "id",
+			key: "id",
 		},
 		{
 			title: "Building No.",
-			dataIndex: "name",
-			key: "name",
+			dataIndex: "building_no",
+			key: "building_no",
 		},
 		{
-			title: "Notification Type",
-			dataIndex: "type",
-			key: "type",
+			title: "Building Name",
+			dataIndex: "building_name",
+			key: "building_name",
 		},
 		{
-			title: "Description",
-			dataIndex: "description",
-			key: "description",
+			title: "Type",
+			dataIndex: "zone_no",
+			key: "zone_no",
+			render: (text) => <label>Asset tagging</label>,
 		},
 		{
 			title: "Action",
-			dataIndex: "action",
-			key: "action",
+			dataIndex: "zone_no",
+			key: "zone_no",
+			render: (text) => (
+				<Button
+					style={{ float: "right" }}
+					icon={<PlusOutlined />}
+					type="primary"
+					onClick={() => setWorkOrderModel(true)}
+				>
+					Create Work Order
+				</Button>
+			),
 		},
 	];
 	const assetColumns = [
@@ -113,7 +142,11 @@ export default function Buildings() {
 						</Col>
 					</Row>
 
-					<Table dataSource={data} columns={columns} />
+					<Table
+						dataSource={data}
+						columns={columns}
+						loading={buildingLoading}
+					/>
 					<Modal
 						title="Create a new notification"
 						visible={isMainModel}
@@ -126,14 +159,6 @@ export default function Buildings() {
 						<Createnewnotification onModalClick={onModalClick} />
 					</Modal>
 					<br />
-					<Button
-						style={{ float: "right" }}
-						icon={<PlusOutlined />}
-						type="primary"
-						onClick={() => setWorkOrderModel(true)}
-					>
-						Create Work Order
-					</Button>
 				</Col>
 				<Col span={6} style={{ paddingLeft: "20px" }}>
 					<Row>

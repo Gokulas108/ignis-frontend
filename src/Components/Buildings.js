@@ -4,12 +4,31 @@ import { Table, Button, Row, Col, message, Modal, Input } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import AddProperty from "./addProperty";
 import ContractDetails from "./contractDetails";
+import api from "../axiosConfig";
 const { Search } = Input;
 
 export default function Buildings() {
 	const [data, setData] = useState([]);
+	const [buildingLoading, setBuidlingLoading] = useState(false);
+	const [assetLoading, setAssetLoading] = useState(false);
 	const [asset, setAsset] = useState([]);
 	const [renewal, setRenewal] = useState([]);
+
+	useEffect(() => {
+		getBuildingDetails();
+	}, []);
+
+	const getBuildingDetails = () => {
+		setBuidlingLoading(true);
+		setAssetLoading(true);
+		api.get("/buildings").then((res) => {
+			console.log(res);
+			setData(res.data.message);
+			setAsset(res.data.message);
+			setBuidlingLoading(false);
+			setAssetLoading(false);
+		});
+	};
 
 	//forms
 	const [buildingDetails, setBuildingDetails] = useState({});
@@ -18,30 +37,33 @@ export default function Buildings() {
 	const columns = [
 		{
 			title: "Ref No.",
-			dataIndex: "pfid",
-			key: "pfid",
+			dataIndex: "id",
+			key: "id",
 		},
 		{
 			title: "Building No.",
-			dataIndex: "name",
-			key: "name",
+			dataIndex: "building_no",
+			key: "building_no",
 		},
 		{
 			title: "Building Name",
-			dataIndex: "site",
-			key: "site",
+			dataIndex: "building_name",
+			key: "building_name",
 		},
 		{
 			title: "Status",
-			dataIndex: "timestamp",
-			key: "timestamp",
+			dataIndex: "zone_no",
+			key: "zone_no",
+			render: (text) => (
+				<label style={{ color: "grey" }}>Pending approval</label>
+			),
 		},
 	];
 	const assetColumns = [
 		{
 			title: "Asset Tagging Required",
-			dataIndex: "bldgNo",
-			key: "bldgNo",
+			dataIndex: "building_name",
+			key: "building_name",
 			colSpan: 2,
 		},
 		{
@@ -116,11 +138,14 @@ export default function Buildings() {
 						</Col>
 					</Row>
 
-					<Table dataSource={data} columns={columns} />
+					<Table
+						dataSource={data}
+						columns={columns}
+						loading={buildingLoading}
+					/>
 					<Modal
 						title="Add a new building"
 						visible={isMainModel}
-						// onOk={() => setMainModel(false)}
 						// onCancel={() => setMainModel(false)}
 						zIndex={1000}
 						footer={null}
@@ -144,6 +169,7 @@ export default function Buildings() {
 							setSubModel={setSubModel}
 							buildingDetails={buildingDetails}
 							success={success}
+							getBuildingDetails={getBuildingDetails}
 						/>
 					</Modal>
 				</Col>
@@ -154,6 +180,7 @@ export default function Buildings() {
 								dataSource={asset}
 								columns={assetColumns}
 								pagination={false}
+								loading={assetLoading}
 							/>
 						</Col>
 					</Row>

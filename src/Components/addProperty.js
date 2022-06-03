@@ -234,38 +234,39 @@ export default function AddProperty(props) {
 								allValues.building_no &&
 								allValues.zone_no &&
 								allValues.street_no
-							)
+							) {
 								console.log(true);
-						axios
-							.post(
-								`https://services.gisqatar.org.qa/server/rest/services/Vector/QARS1/MapServer/0/query?f=json&where=ZONE_NO%20%3D${allValues.zone_no}%20and%20STREET_NO%3D${allValues.street_no}%20and%20BUILDING_NO%3D${allValues.building_no}&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=ZONE_NO%2CSTREET_NO%2CBUILDING_NO%2CQARS%2CELECTRICITY_NO%2CWATER_NO%2CQTEL_ID`
-							)
-							.then((res) => {
-								let x = res.data.features[0].geometry.x;
-								let y = res.data.features[0].geometry.y;
-								console.log(x, y);
-								setLoadingMap(true);
-								api
-									.post(`/coordinates`, { coordinates: { x, y } })
+								axios
+									.post(
+										`https://services.gisqatar.org.qa/server/rest/services/Vector/QARS1/MapServer/0/query?f=json&where=ZONE_NO%20%3D${allValues.zone_no}%20and%20STREET_NO%3D${allValues.street_no}%20and%20BUILDING_NO%3D${allValues.building_no}&returnGeometry=true&spatialRel=esriSpatialRelIntersects&outFields=ZONE_NO%2CSTREET_NO%2CBUILDING_NO%2CQARS%2CELECTRICITY_NO%2CWATER_NO%2CQTEL_ID`
+									)
 									.then((res) => {
-										// console.log(res);
-										setLoadingMap(false);
-										console.log("lat :", res.data.message.y);
-										let lat = res.data.message.y;
-										let long = res.data.message.x;
-										console.log("Long : ", res.data.message.x);
-										setCoordinates({ lat, long });
-										setDisplayMap(true);
+										let x = res.data.features[0].geometry.x;
+										let y = res.data.features[0].geometry.y;
+										console.log(x, y);
+										setLoadingMap(true);
+										api
+											.post(`/coordinates`, { coordinates: { x, y } })
+											.then((res) => {
+												// console.log(res);
+												setLoadingMap(false);
+												console.log("lat :", res.data.message.y);
+												let lat = res.data.message.y;
+												let long = res.data.message.x;
+												console.log("Long : ", res.data.message.x);
+												setCoordinates({ lat, long });
+												setDisplayMap(true);
+											})
+											.catch((res) => {
+												setDisplayMap(false);
+												setLoadingMap(false);
+											});
 									})
 									.catch((res) => {
 										setDisplayMap(false);
 										setLoadingMap(false);
 									});
-							})
-							.catch((res) => {
-								setDisplayMap(false);
-								setLoadingMap(false);
-							});
+							}
 					}}
 				>
 					<Row>
@@ -806,7 +807,7 @@ export default function AddProperty(props) {
 								<Checkbox.Group style={{ width: "100%" }}>
 									<Row>
 										{options.map((option) => (
-											<Col key={option.value} md={12} xs={24}>
+											<Col key={option.value.value} md={12} xs={24}>
 												<Checkbox value={option.value}>{option.label}</Checkbox>
 											</Col>
 										))}
