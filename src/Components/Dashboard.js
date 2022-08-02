@@ -8,6 +8,7 @@ import {
 	BankOutlined,
 	BellOutlined,
 	FormOutlined,
+	SettingOutlined, 
 } from "@ant-design/icons";
 
 export default function Dashboard() {

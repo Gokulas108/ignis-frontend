@@ -1,34 +1,67 @@
 import Layout from "./Layout";
 import { useEffect, useState } from "react";
-import { Table, Button, Row, Col, Divider, Modal, Input } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Table, Button, Row, Col, Divider, Modal, Input, message } from "antd";
+import {
+	PlusOutlined,
+	BellOutlined,
+	FormOutlined,
+	EyeOutlined,
+	LoadingOutlined,
+} from "@ant-design/icons";
 import Createnewnotification from "./createnewnotification";
 import Createworkorder from "./createworkorder";
 import Createworkorder2 from "./createworkorder2";
 import api from "../axiosConfig";
+import { getUser } from "../Auth/Auth";
 
 const { Search } = Input;
 
-export default function Buildings() {
+export default function Notifcation() {
 	const [data, setData] = useState([]);
 	const [asset, setAsset] = useState([]);
+	const [notificationLoading, setNotificationLoading] = useState(false);
+	const [selectedNotification, setSelectedNotification] = useState(null);
+	const [buildingDetails, setBuildingDetails] = useState([]);
 	const [buildingLoading, setBuidlingLoading] = useState(false);
 	const [renewal, setRenewal] = useState([]);
+	const [userType, setUserType] = useState(null);
 
 	useEffect(() => {
+		getNotificationsDetails();
 		getBuildingDetails();
+		const user = getUser();
+		console.log(user);
+		setUserType(user.role);
 	}, []);
+
+	const getNotificationsDetails = () => {
+		setNotificationLoading(true);
+		api
+			.get("/notifications")
+			.then((res) => {
+				console.log(res);
+				setData(res.data.message);
+			})
+			.catch((err) =>
+				message.error("Error while fetching notification details!")
+			)
+			.finally(() => {
+				setNotificationLoading(false);
+			});
+	};
 
 	const getBuildingDetails = () => {
 		setBuidlingLoading(true);
-		// setAssetLoading(true);
-		api.get("/buildings").then((res) => {
-			console.log(res);
-			setData(res.data.message);
-			// setAsset(res.data.message);
-			setBuidlingLoading(false);
-			// setAssetLoading(false);
-		});
+		api
+			.get("/buildings")
+			.then((res) => {
+				console.log(res);
+				setBuildingDetails(res.data.message);
+			})
+			.catch((err) => message.error("Error while fetching building details!"))
+			.finally(() => {
+				setBuidlingLoading(false);
+			});
 	};
 
 	const columns = [
@@ -38,35 +71,44 @@ export default function Buildings() {
 			key: "id",
 		},
 		{
-			title: "Building No.",
-			dataIndex: "building_no",
-			key: "building_no",
-		},
-		{
 			title: "Building Name",
 			dataIndex: "building_name",
 			key: "building_name",
 		},
 		{
 			title: "Type",
-			dataIndex: "zone_no",
-			key: "zone_no",
-			render: (text) => <label>Asset tagging</label>,
+			dataIndex: "notification_type",
+			key: "notification_type",
+		},
+		{
+			title: "Reason",
+			dataIndex: "reason",
+			key: "reason",
+			width: "40%",
 		},
 		{
 			title: "Action",
-			dataIndex: "zone_no",
-			key: "zone_no",
-			render: (text) => (
-				<Button
-					style={{ float: "right" }}
-					icon={<PlusOutlined />}
-					type="primary"
-					onClick={() => setWorkOrderModel(true)}
-				>
-					Create Work Order
-				</Button>
-			),
+			dataIndex: "id",
+			key: "id",
+			render: (text, record) =>
+				userType === "engineer" ? (
+					<Button
+						style={{ float: "right" }}
+						icon={<FormOutlined />}
+						type="primary"
+						onClick={() => setWorkOrderModel(true)}
+					></Button>
+				) : userType === "admin" ? (
+					<Button
+						icon={<EyeOutlined />}
+						style={{ float: "right" }}
+						type="primary"
+						onClick={() => {
+							setMainModel(true);
+							setSelectedNotification(record);
+						}}
+					></Button>
+				) : null,
 		},
 	];
 	const assetColumns = [
@@ -107,9 +149,14 @@ export default function Buildings() {
 	const [isMainModel, setMainModel] = useState(false); // Create a new notification modal
 	const [isWorkOrderModel, setWorkOrderModel] = useState(false); // Create Work order modal
 	const [isWorkOrderModel2, setWorkOrderModel2] = useState(false);
+	const [mainModalForm, setMainModalForm] = useState(null);
 
-	const onModalClick = () => {
+	const onModalClick = (success) => {
 		setMainModel(false);
+		if (success) {
+			message.success("Notification created successfully");
+			getNotificationsDetails();
+		}
 	};
 
 	const onWorkOrderModalClick = () => {
@@ -131,32 +178,48 @@ export default function Buildings() {
 						</Col>
 
 						<Col span="12">
-							<Button
-								style={{ float: "right" }}
-								icon={<PlusOutlined />}
-								type="primary"
-								onClick={() => setMainModel(true)}
-							>
-								Create Notification
-							</Button>
+							{userType === "admin" ? (
+								<Button
+									style={{ float: "right" }}
+									icon={<PlusOutlined />}
+									type="primary"
+									onClick={() => setMainModel(true)}
+								>
+									Create Notification
+								</Button>
+							) : null}
 						</Col>
 					</Row>
 
 					<Table
 						dataSource={data}
 						columns={columns}
-						loading={buildingLoading}
+						loading={notificationLoading}
 					/>
 					<Modal
 						title="Create a new notification"
 						visible={isMainModel}
 						// onOk={() => setMainModel(false)}
-						onCancel={() => setMainModel(false)}
+						onCancel={() => {
+							setMainModel(false);
+							setSelectedNotification(null);
+							mainModalForm.resetFields();
+						}}
 						zIndex={1000}
 						footer={null}
 						className="addNewBuildingModal"
 					>
-						<Createnewnotification onModalClick={onModalClick} />
+						{buildingLoading ? (
+							<LoadingOutlined />
+						) : (
+							<Createnewnotification
+								key={selectedNotification?.id || 0}
+								buildingDetails={buildingDetails}
+								onModalClick={onModalClick}
+								selectedNotification={selectedNotification}
+								setMainModalForm={setMainModalForm}
+							/>
+						)}
 					</Modal>
 					<br />
 				</Col>

@@ -2,6 +2,9 @@ import React from "react";
 import { Layout, Menu } from "antd";
 import { useState } from "react";
 import Logo from "../Assets/Logo.png";
+import { getToken, resetUserSession, getUser } from "../Auth/Auth";
+import api from "../axiosConfig";
+
 import {
 	BarChartOutlined,
 	MenuFoldOutlined,
@@ -13,9 +16,11 @@ import {
 	CalendarOutlined,
 	FormOutlined,
 	CommentOutlined,
+	SettingOutlined,
 } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, Navigate } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -24,6 +29,7 @@ const headings = {
 	"/buildings": "Buildings",
 	"/workorder": "Work Orders",
 	"/notifications": "Notifications",
+	"/master": "Master Page",
 };
 
 React.useLayoutEffect = React.useEffect;
@@ -31,11 +37,40 @@ React.useLayoutEffect = React.useEffect;
 const LayoutComponent = () => {
 	const [collapsed, setCollapsed] = useState(true);
 	const [showButton, setShowButton] = useState(false);
+	const [loading, setLoading] = useState(false);
+	const [pageLoading, setPageLoading] = React.useState(0);
 
 	let navigate = useNavigate();
 	let location = useLocation();
 
-	return (
+	React.useEffect(() => {
+		if (!getToken()) {
+			resetUserSession();
+			navigate("/login");
+		}
+	}, []);
+
+	React.useEffect(() => {
+		console.log("Location changed");
+		verify();
+	}, [location]);
+
+	const verify = () => {
+		setLoading(true);
+		api
+			.post("auth/verify", { user: getUser(), token: getToken() })
+			.then((res) => {
+				console.log(res);
+				setLoading(false);
+			})
+			.catch((err) => {
+				resetUserSession();
+				setLoading(false);
+				navigate("/login");
+			});
+	};
+
+	return getToken ? (
 		<div>
 			<Layout>
 				<div
@@ -104,32 +139,12 @@ const LayoutComponent = () => {
 						>
 							Buildings
 						</Menu.Item>
-						{/* <Menu.Item key="3" icon={<ApiOutlined />}>
-              Assets
-            </Menu.Item> */}
 						<Menu.Item
 							key="/notifications"
 							className="itemStyle"
 							icon={<BellOutlined />}
 						>
 							Notifications
-						</Menu.Item>
-						<Menu.Item
-							key="/workorder"
-							className="itemStyle"
-							icon={<ReconciliationOutlined />}
-						>
-							Work Orders
-						</Menu.Item>
-						<Menu.Item
-							key="6"
-							className="itemStyle"
-							icon={<CalendarOutlined />}
-						>
-							Schedule
-						</Menu.Item>
-						<Menu.Item key="7" className="itemStyle" icon={<FormOutlined />}>
-							Reports
 						</Menu.Item>
 					</Menu>
 				</Sider>
@@ -141,15 +156,55 @@ const LayoutComponent = () => {
 						marginTop: 0,
 					}}
 				>
-					{/* <div className="topBar">
-            {" "}
-            <CommentOutlined />
-          </div> */}
 					<div
 						className="pageHeader"
-						style={{ paddingLeft: showButton ? "35px" : "12px" }}
+						style={{
+							paddingLeft: showButton ? "35px" : "12px",
+							width: "100%",
+							display: "block",
+						}}
 					>
 						{headings[location.pathname]}
+
+						<label
+							onClick={() => {
+								resetUserSession();
+								navigate("/login");
+							}}
+							style={{
+								float: "right",
+								paddingRight: "180px",
+								cursor: "pointer",
+								fontSize: "14px",
+							}}
+						>
+							Logout
+						</label>
+						{getUser()?.role === "admin" ? (
+							<div
+								style={{
+									float: "right",
+									paddingRight: "20px",
+									cursor: "pointer",
+									fontSize: "14px",
+								}}
+								onClick={() => {
+									navigate("/master");
+								}}
+							>
+								<SettingOutlined />
+							</div>
+						) : null}
+						<div
+							style={{
+								backgroundColor: "orange",
+								width: `${pageLoading}%`,
+								position: "relative",
+								bottom: 0,
+								left: "-13px",
+								height: "15px",
+							}}
+						></div>
 					</div>
 					<Content
 						style={{
@@ -158,7 +213,22 @@ const LayoutComponent = () => {
 						}}
 					>
 						<div className="site-layout-background" style={{ padding: 24 }}>
-							<Outlet />
+							{loading ? (
+								<div
+									style={{
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
+										height: "400px",
+									}}
+								>
+									<LoadingOutlined />
+								</div>
+							) : (
+								<div style={{}}>
+									<Outlet context={[pageLoading, setPageLoading]} />
+								</div>
+							)}
 						</div>
 					</Content>
 					<Footer style={{ textAlign: "center", backgroundColor: "#F7F7F7" }}>
@@ -166,6 +236,17 @@ const LayoutComponent = () => {
 					</Footer>
 				</Layout>
 			</Layout>
+		</div>
+	) : (
+		<div
+			style={{
+				fontSize: "25px",
+				display: "flex",
+				justifyContent: "center",
+			}}
+		>
+			<LoadingOutlined />
+			<Navigate to="/login" />
 		</div>
 	);
 };

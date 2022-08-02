@@ -1,8 +1,8 @@
-import { Form, Input, Button, Checkbox, message } from "antd";
+import { Form, Input, Button, Checkbox, message, Alert } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import api from "../axiosConfig";
 import { useState } from "react";
-import { setUserSession } from "../Auth/Auth";
+import { getUser } from "../Auth/Auth";
 import { useNavigate } from "react-router-dom";
 
 export default function NormalLoginForm() {
@@ -12,25 +12,19 @@ export default function NormalLoginForm() {
 	const onFinish = (values) => {
 		setLoading(true);
 		console.log("Received values of form: ", values);
-		let { email, password } = { ...values };
-		email = email.trim();
-		password = password.trim();
+		let { new_password, confirm_password } = { ...values };
+		new_password = new_password.trim();
+		confirm_password = confirm_password.trim();
+		let user = getUser();
 		api
-			.post("/auth/login", { userInfo: { email, password } })
+			.post("/auth/reset", { user, new_password, confirm_password })
 			.then((res) => {
 				setLoading(false);
 				console.log(res);
-				if (res.status === 200) {
-					const user = res.data.message.user;
-					const token = res.data.message.token;
-					setUserSession({ user, token });
-
-					if (user.first_login) {
-						navigate("/resetpassword");
-					} else {
-						navigate("/");
-					}
-				}
+				message.success(
+					"Password changed successfully, Login with new credentials"
+				);
+				navigate("/login");
 			})
 			.catch((err) => {
 				setLoading(false);
@@ -44,31 +38,44 @@ export default function NormalLoginForm() {
 	return (
 		<div className="loginform">
 			<img style={{ paddingLeft: "30px" }} src="logo.png" height={100}></img>
-			<div style={{ height: "25px" }}></div>
+			<div style={{ height: "70px", marginTop: "10px" }}>
+				<Alert
+					message={
+						<>
+							This is your first login, please set
+							<br />
+							your new password.
+						</>
+					}
+					type="warning"
+				/>
+			</div>
 			<Form
 				name="normal_login"
 				className="login-form"
+				autoComplete="off"
 				initialValues={{
 					remember: true,
 				}}
 				onFinish={onFinish}
 			>
 				<Form.Item
-					name="email"
+					name="new_password"
 					rules={[
 						{
 							required: true,
-							message: "Please input your Email!",
+							message: "Please input your password!",
 						},
 					]}
 				>
 					<Input
-						prefix={<UserOutlined className="site-form-item-icon" />}
-						placeholder="Email"
+						type="password"
+						prefix={<LockOutlined className="site-form-item-icon" />}
+						placeholder="New Password"
 					/>
 				</Form.Item>
 				<Form.Item
-					name="password"
+					name="confirm_password"
 					rules={[
 						{
 							required: true,
@@ -79,17 +86,8 @@ export default function NormalLoginForm() {
 					<Input
 						prefix={<LockOutlined className="site-form-item-icon" />}
 						type="password"
-						placeholder="Password"
+						placeholder="Confirm Password"
 					/>
-				</Form.Item>
-				<Form.Item>
-					<a className="login-form-forgot" href="">
-						Forgot password
-					</a>
-					<br />
-					<Form.Item name="remember" valuePropName="checked" noStyle>
-						<Checkbox>Remember me</Checkbox>
-					</Form.Item>
 				</Form.Item>
 
 				<Form.Item>
@@ -99,7 +97,7 @@ export default function NormalLoginForm() {
 						className="login-form-button"
 						loading={loading}
 					>
-						Log in
+						Change Password
 					</Button>
 				</Form.Item>
 			</Form>
